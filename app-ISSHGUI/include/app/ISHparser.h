@@ -5,8 +5,13 @@
 #include <QDir>
 #include <QDebug>
 
+#include <windows.h>
+#include <stdio.h>
+ 
+
+
 static QString ish_path = "../data/isaac-secret-helper_1.0/IsaacSecretHelper.exe";
-static QString arguments = R"(-p  C:/DEV/perso/dist/bin/data/mysave -u)";
+static QString arguments = "-p  ../data/mysave/ -u";
 
 
 class ISHParser : public QObject
@@ -23,5 +28,9 @@ public:
 
 private:
 	QProcess* process;
+
+	void startExternalProgram();
+	void startExternalProgramWithQt();
+
 };
 #endif // !ISH_PARSER
