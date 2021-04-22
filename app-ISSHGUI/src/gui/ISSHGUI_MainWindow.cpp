@@ -3,8 +3,7 @@
 ISSHGUI_MainWindow::ISSHGUI_MainWindow(QWidget* parent) 
 	: QMainWindow(parent)
 {
-	ui.setupUi(this);
-	qDebug() << "lets go";
+	ui.setupUi(this); 
 
 	QObject::connect(ui.pbSave1, SIGNAL(clicked()), this, SLOT(save1selected()));
 	QObject::connect(ui.pbSave2, SIGNAL(clicked()), this, SLOT(save2selected()));

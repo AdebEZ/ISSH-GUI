@@ -12,13 +12,7 @@ ISHParser::~ISHParser()
 
 }
 
-void ISHParser::readOutput()
-{
-	qDebug() << "reading output";
-	qDebug() << process->readAllStandardError();
-	qDebug() << process->readAllStandardOutput();
-}
-
+// with QProcess
 void ISHParser::startExternalProgramWithQt()
 {
     process = new QProcess(this);
@@ -34,6 +28,14 @@ void ISHParser::startExternalProgramWithQt()
     //https://www.qtcentre.org/threads/62415-QProcess-not-communicating-with-net-framework-gt-3-5 
 }
 
+void ISHParser::readOutput()
+{
+    qDebug() << "reading output";
+    qDebug() << process->readAllStandardError();
+    qDebug() << process->readAllStandardOutput();
+}
+
+// other way with windows.h
 void ISHParser::startExternalProgram()
 {
     STARTUPINFO si;
@@ -51,18 +53,13 @@ void ISHParser::startExternalProgram()
     HANDLE g_hChildStd_OUT_Wr = NULL;
     // Set the bInheritHandle flag so pipe handle
     // Create a pipe for the child process's STDOUT. 
-    if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0))
-        qDebug() << "StdoutRd CreatePipe";
+    if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0)) 
     // Ensure the read handle to the pipe for STDOUT is not inherited.
-    if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0))
-        qDebug() << "Stdout SetHandleInformation";
+    if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) 
     // Create a pipe for the child process's STDIN. 
-    if (!CreatePipe(&g_hChildStd_IN_Rd, &g_hChildStd_IN_Wr, &saAttr, 0))
-        qDebug() << "Stdin CreatePipe";
-
+    if (!CreatePipe(&g_hChildStd_IN_Rd, &g_hChildStd_IN_Wr, &saAttr, 0)) 
     // Ensure the write handle to the pipe for STDIN is not inherited. 
-    if (!SetHandleInformation(g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0))
-        qDebug() << "Stdin SetHandleInformation";
+    if (!SetHandleInformation(g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) 
 
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
@@ -116,12 +113,8 @@ void ISHParser::startExternalProgram()
             bSuccess = WriteFile(hParentStdOut, chBuf, dwRead, &dwWritten, NULL);
             if (!bSuccess) break;
         }
-        // parse result and search for error ou exit code
-        if (result.contains("Driver failed to start", Qt::CaseInsensitive))
-        {
-
-        }
         qDebug() << result;
+        // @TODO : parse result
         qDebug() << "|||||||||||||||||||||||||||||||";
         CloseHandle(g_hChildStd_OUT_Rd);
         CloseHandle(g_hChildStd_IN_Wr);
