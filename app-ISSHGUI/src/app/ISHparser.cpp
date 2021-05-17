@@ -53,13 +53,17 @@ void ISHParser::startExternalProgram()
     HANDLE g_hChildStd_OUT_Wr = NULL;
     // Set the bInheritHandle flag so pipe handle
     // Create a pipe for the child process's STDOUT. 
-    if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0)) 
+    if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0))
+        qDebug() << "error creating pipe";
     // Ensure the read handle to the pipe for STDOUT is not inherited.
     if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) 
+        qDebug() << "error setting handle info";
     // Create a pipe for the child process's STDIN. 
     if (!CreatePipe(&g_hChildStd_IN_Rd, &g_hChildStd_IN_Wr, &saAttr, 0)) 
+        qDebug() << "error creating pipe";
     // Ensure the write handle to the pipe for STDIN is not inherited. 
     if (!SetHandleInformation(g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) 
+        qDebug() << "error setting handle info";
 
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
@@ -94,7 +98,7 @@ void ISHParser::startExternalProgram()
     else {
         qDebug() << "|||||||||||||child process output " << path << " ||||||||||||||||||";
         qDebug() << args;
-        // Close handles to the stdin and stdout pipes no longer needed by the child process.
+        // Close handles to the stsdin and stdout pipes no longer needed by the child process.
         // If they are not explicitly closed, there is no way to recognize that the child process has ended.
         CloseHandle(g_hChildStd_OUT_Wr);
         CloseHandle(g_hChildStd_IN_Rd);
